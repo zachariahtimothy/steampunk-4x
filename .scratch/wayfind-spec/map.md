@@ -1,5 +1,8 @@
 # Wayfinder map: Steampunk industrial 4X spec
 
+> **LIVE MAP:** https://github.com/zachariahtimothy/steampunk-4x/issues/1  
+> This file is a local archive snapshot; edit the GitHub issue.
+
 Label: `wayfinder:map`
 
 ## Destination
@@ -8,7 +11,7 @@ A sharp **game design / product spec** that future-you (with AI help) can use to
 
 ## Notes
 
-- **Tracker:** local markdown (see `docs/agents/issue-tracker.md`). GitHub later.
+- **Tracker:** GitHub Issues (see `docs/agents/issue-tracker.md`). This directory is archive + research assets.
 - **Skills every session:** `wayfinder`, `grilling`, `domain-modeling`; `research` / `prototype` when ticket type says so.
 - **Domain language:** root `CONTEXT.md` — update when terms crystallize.
 - **Phone-friendly:** prefer one grilling question at a time when Zach is on mobile.
