@@ -84,3 +84,27 @@ _Avoid_: Caravan as the only term
 UI guidance that flags missing logistics inputs and suggests fixes without requiring spreadsheet play.
 _Avoid_: Advisor (too generic)
 
+**Industrial Supremacy**:
+Victory Path sealed by completing the Foundry Crown after industrial milestone projects.
+_Avoid_: Economic victory (too vague), score win
+
+**Foundry Crown**:
+The final industrial victory project; public when started; completable under logistics readiness.
+_Avoid_: Wonder (too Civ-generic as the only term)
+
+**Invention Apex**:
+Victory Path sealed by completing the World Machine after required showcase Inventions.
+_Avoid_: Science victory
+
+**World Machine**:
+The final invention victory project; public when started.
+_Avoid_: Spaceship (Civ residue), doomsday device (unless flavor)
+
+**Domination**:
+Victory Path sealed by holding a control threshold of Settlements/strategic hubs for Y turns.
+_Avoid_: Conquest-only elimination as the definition
+
+**Endgame Signal**:
+Public knowledge that a Faction has entered a Victory Path's final phase (path band known; exact metrics gated).
+_Avoid_: Score screen
+
