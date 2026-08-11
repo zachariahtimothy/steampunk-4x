@@ -160,3 +160,11 @@ _Avoid_: Race kit, civilization ability sprawl
 Working names for the four v1 starter Factions.
 _Avoid_: Treating names as final IP
 
+**Anchor / March**:
+Traction Settlement modes — Anchored for production/defense, March for movement at vulnerability and upkeep cost.
+_Avoid_: Deployed/undeployed only as jargon without these names
+
+**Track Scar**:
+Environmental/logistics damage left by off-network Traction movement.
+_Avoid_: Pollution only (related but broader)
+
