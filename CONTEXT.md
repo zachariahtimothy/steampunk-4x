@@ -1,6 +1,6 @@
-# Steampunk Industrial 4X
+# Soot Empire
 
-Single-player turn-based strategy: build industrial power, advance through eras gated by logistics, win via multiple paths. Soft alt-Earth; grimy industrial steampunk.
+Working title for the single-player turn-based strategy: build industrial power, advance through eras gated by logistics, win via multiple paths. Soft alt-Earth; grimy industrial steampunk.
 
 ## Language
 
