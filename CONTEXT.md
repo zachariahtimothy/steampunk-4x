@@ -168,3 +168,15 @@ _Avoid_: Deployed/undeployed only as jargon without these names
 Environmental/logistics damage left by off-network Traction movement.
 _Avoid_: Pollution only (related but broader)
 
+**Region**:
+A generation-scale area of the continent containing starts, deposits, or corridors.
+_Avoid_: Province only, state
+
+**Corridor**:
+A strategic path between regions (gate, crossing, isthmus) that dual-use networks and armies contest.
+_Avoid_: Lane only
+
+**Strategic Hub**:
+A map site that matters for logistics and counts toward Domination control.
+_Avoid_: VP only, objective (too FPS)
+
