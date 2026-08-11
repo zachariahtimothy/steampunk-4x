@@ -33,7 +33,8 @@ A sharp **game design / product spec** that future-you (with AI help) can use to
 
 <!-- index only — one line per resolved ticket -->
 
-_(none yet)_
+- [Comparable games research](issues/02-comparable-games-research.md) — Steal Anno-shallow chains, dual-use logistics, Old World strat Composition, on-rails machine design, Civ eras + hard logistics gates, deniable industry wins; avoid battle layers, Factorio depth, traction-default, freeform LLM rules. Full: [assets/02-comparable-games.md](assets/02-comparable-games.md)
+- [Machinery motif research](issues/03-machinery-motif-research.md) — Adopt rare mobile industry, landships/trains/crawlers, track-scar costs, automata, dual invention voice; avoid ME Municipal Darwinism/jaws and WWW tarantula-tank packaging. Full: [assets/03-machinery-motifs.md](assets/03-machinery-motifs.md)
 
 ## Not yet specified
 
@@ -52,7 +53,6 @@ _(none yet)_
 - Save/load, UX, accessibility
 - Engine/tech stack (explicitly later effort unless a ticket proves the spec cannot proceed)
 - Multiplayer (out unless destination redrawn)
-- Full Mortal Engines “municipal Darwinism” predation as default (we chose rare traction, not predator-cities-as-core)
 
 ## Out of scope
 
@@ -63,3 +63,5 @@ _(none yet)_
 - Open-ended LLM mechanics generation (freeform runtime rules invention)
 - Full Factorio-depth factory sandbox inside the 4X
 - Faithful adaptations of *Mortal Engines* or *Wild Wild West* IP
+- Municipal Darwinism / predator-city core loop; ME/WWW signature set pieces as branded clones
+- Traction settlements as the default city type
