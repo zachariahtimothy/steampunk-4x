@@ -33,6 +33,7 @@ Open the URL Vite prints (default `http://127.0.0.1:5173`).
 ```bash
 npm run build      # production bundle
 npm run typecheck  # tsc only
+npm test           # sim unit tests (vitest)
 ```
 
 ## Vertical slice

@@ -42,7 +42,7 @@
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr) 300px;
 }
 
 .map-panel {
@@ -70,39 +70,73 @@
 }
 
 .side-panel h2 {
-  margin: 0 0 0.5rem;
+  margin: 1rem 0 0.5rem;
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #c4a882;
 }
 
+.side-panel h2:first-child {
+  margin-top: 0;
+}
+
 .side-panel .muted {
-  margin: 0 0 1rem;
+  margin: 0 0 0.5rem;
   color: #9a8b78;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
-.side-panel dl {
-  margin: 0 0 1.25rem;
-}
-
-.side-panel dl > div {
-  display: grid;
-  gap: 0.15rem;
-  margin-bottom: 0.75rem;
-}
-
-.side-panel dt {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #8a7a66;
-}
-
-.side-panel dd {
-  margin: 0;
+.stock-line {
+  margin: 0 0 0.5rem;
   font-size: 0.95rem;
+  color: #f0e6d8;
+}
+
+button.primary {
+  background: #4a3a28;
+  border-color: #c4a35a;
+  margin-bottom: 0.5rem;
+}
+
+button.route-on {
+  border-color: #7a9eb5;
+  background: #2a3540;
+}
+
+.route-list,
+.plain-list,
+.log-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.route-list li {
+  margin-bottom: 0.4rem;
+}
+
+.route-list button {
+  width: 100%;
+  text-align: left;
+}
+
+.plain-list li,
+.log-list li {
+  font-size: 0.82rem;
+  color: #d2c4b0;
+  margin-bottom: 0.35rem;
+}
+
+.log-list li {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #b8a890;
+}
+
+.flash {
+  color: #e8a090;
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem;
 }
 
 .next-list {
