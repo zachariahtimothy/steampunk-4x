@@ -180,3 +180,15 @@ _Avoid_: Lane only
 A map site that matters for logistics and counts toward Domination control.
 _Avoid_: VP only, objective (too FPS)
 
+**Invention License**:
+A diplomatic deal granting rights to produce a Mark family or chassis line under shared invent rails.
+_Avoid_: Patent as the only term (flavor OK)
+
+**Passage**:
+Negotiated right to move goods or armies through a Corridor or rail segment.
+_Avoid_: Open borders only (too Civ-generic as sole name)
+
+**Stance**:
+Simple pairwise diplomatic temperature (Hostile to Partner) driven by contracts, borders, and victory threat.
+_Avoid_: Granular modifier soup
+
