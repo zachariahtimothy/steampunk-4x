@@ -48,3 +48,8 @@ src/App.tsx        React chrome
 docs/spec/         design SPEC
 docs/adr/          architecture decisions
 ```
+
+## Git workflow
+
+PRs only — no direct commits to `main`. See `AGENTS.md`.
+
