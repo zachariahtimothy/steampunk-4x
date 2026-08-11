@@ -13,9 +13,14 @@ Repo: `zachariahtimothy/steampunk-4x` (inferred from `git remote`).
 - **Labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
 - **Close**: `gh issue close <number> --comment "..."`
 
-## Pull requests as a triage surface
+## Pull requests
 
-**PRs as a request surface: no.**
+**All code and doc changes land via PR into `main`.** Do not commit or push directly to `main`.
+
+- Branch → commits → `gh pr create` → review/merge.
+- Link implementation work to Sandbox milestone issues (`Closes #N` when the PR finishes the issue).
+- **PRs are not a product triage / feature-request surface** — use Issues for requests and decisions. PRs deliver changes.
+
 
 ## When a skill says "publish to the issue tracker"
 
