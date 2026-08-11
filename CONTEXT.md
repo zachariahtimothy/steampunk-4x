@@ -140,3 +140,15 @@ _Avoid_: AP only, mana
 The four v1 combat roles that fill Army slots and drive the counter wheel.
 _Avoid_: Infantry/cavalry/artillery as the only taxonomy (flavor OK)
 
+**Raiders**:
+Core Neutral Threat that primarily steals or destroys cargo on Routes and Convoys.
+_Avoid_: Barbarians (Civ residue) as the only term
+
+**Rogue Automata**:
+Core Neutral Threat of runaway or abandoned machines that primarily contest hubs, extractors, and industrial works.
+_Avoid_: Monsters, aliens
+
+**Crisis**:
+A timed modular neutral event (ash storm, labor strike, unstable prototype) distinct from standing core threats.
+_Avoid_: Random event only, disaster movie
+
