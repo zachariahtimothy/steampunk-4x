@@ -152,3 +152,11 @@ _Avoid_: Monsters, aliens
 A timed modular neutral event (ash storm, labor strike, unstable prototype) distinct from standing core threats.
 _Avoid_: Random event only, disaster movie
 
+**Signature Tool**:
+The single unique building, policy, or Mark branch allowed per Faction under light asymmetry.
+_Avoid_: Race kit, civilization ability sprawl
+
+**Cinder Crown / Sootwright Compact / Ironway Syndicate / Ashwalker Freeholds**:
+Working names for the four v1 starter Factions.
+_Avoid_: Treating names as final IP
+
