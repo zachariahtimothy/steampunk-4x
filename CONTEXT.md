@@ -196,3 +196,7 @@ _Avoid_: Granular modifier soup
 A throughput/readiness check that unlocks full-rate power or completion eligibility inside an Era.
 _Avoid_: Soft cap only, era requirement (that's research door)
 
+**Vertical Slice**:
+The first implementable playable cut: sandbox logistics + invent/field loop, then Compact map follow-on; not the full Match.
+_Avoid_: Prototype as synonym for the whole product, MVP feature dump
+
