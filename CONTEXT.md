@@ -37,7 +37,7 @@ An unlock in the progression structure (eras + logistics gates).
 _Avoid_: Tech when meaning a crafted Invention
 
 **Era**:
-A readable progression band; real power gates also depend on logistics readiness.
+One of three progression bands (Early/Middle/Late Industrial). Research opens the Era; logistics gates unlock power inside it.
 _Avoid_: Age only (synonym OK in flavor text)
 
 **Composition**:
@@ -191,4 +191,8 @@ _Avoid_: Open borders only (too Civ-generic as sole name)
 **Stance**:
 Simple pairwise diplomatic temperature (Hostile to Partner) driven by contracts, borders, and victory threat.
 _Avoid_: Granular modifier soup
+
+**Logistics Gate**:
+A throughput/readiness check that unlocks full-rate power or completion eligibility inside an Era.
+_Avoid_: Soft cap only, era requirement (that's research door)
 
