@@ -128,3 +128,15 @@ _Avoid_: Science (too Civ-generic), mana
 In-game AI assist that proposes legal Marks from the authored catalog for a player goal; player must approve.
 _Avoid_: Autodesigner as default, generative mechanics
 
+**Army**:
+A strategy-map stack with a hard role-slot cap representing fielded Composition.
+_Avoid_: Stack as the only term, blob
+
+**Orders**:
+Per-army action budget for move, attack, brace, and related combat/maneuver verbs.
+_Avoid_: AP only, mana
+
+**Line / Shock-Raid / Siege / Support**:
+The four v1 combat roles that fill Army slots and drive the counter wheel.
+_Avoid_: Infantry/cavalry/artillery as the only taxonomy (flavor OK)
+
