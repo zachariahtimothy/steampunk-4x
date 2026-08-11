@@ -29,7 +29,7 @@ The extract → haul → refine → manufacture path that feeds industry and mac
 _Avoid_: Economy (too broad), supply line (military-only connotation)
 
 **Invention**:
-A player-directed machine or weapon built within authored parts, tags, and stat budgets (optionally assisted by in-game AI generation for combination/flavor).
+A player-directed machine or weapon Mark built within authored parts, tags, and stat budgets; research-gated; Co-pilot may suggest legal builds and flavor only.
 _Avoid_: Tech (use **Advance** or **Era tech** for tree unlocks), mod
 
 **Advance**:
@@ -107,4 +107,24 @@ _Avoid_: Conquest-only elimination as the definition
 **Endgame Signal**:
 Public knowledge that a Faction has entered a Victory Path's final phase (path band known; exact metrics gated).
 _Avoid_: Score screen
+
+**Mark**:
+A concrete designed machine or weapon model produced from a chassis plus installed parts under rails.
+_Avoid_: Prototype (unless meaning pre-produce design), unit type (implementation)
+
+**Chassis Family**:
+An authored movement/frame class that defines slot layout and hard constraints (e.g. Rail, Walker).
+_Avoid_: Hull only, body type
+
+**Part**:
+An authored module with tags, costs, and stat/tax effects installed into a chassis slot.
+_Avoid_: Component when meaning UI chrome
+
+**Laboratory Points**:
+Design-capacity currency from research buildings/activities required for mid/complex Marks alongside logistics goods.
+_Avoid_: Science (too Civ-generic), mana
+
+**Co-pilot**:
+In-game AI assist that proposes legal Marks from the authored catalog for a player goal; player must approve.
+_Avoid_: Autodesigner as default, generative mechanics
 
