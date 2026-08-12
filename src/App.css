@@ -191,6 +191,60 @@ button.route-on {
   background: #e8a090;
 }
 
+.invent-slot {
+  display: grid;
+  gap: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.invent-slot label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #8a7a66;
+}
+
+.invent-slot select,
+.invent-actions input[type='text'] {
+  font: inherit;
+  background: #1a1510;
+  color: #f0e6d8;
+  border: 1px solid #6b5344;
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+  width: 100%;
+}
+
+.invent-status {
+  margin: 0.5rem 0;
+}
+
+.ok-line {
+  margin: 0 0 0.35rem;
+  color: #a8c49a;
+  font-size: 0.85rem;
+}
+
+.ban-list {
+  margin: 0 0 0.35rem;
+  padding-left: 1.1rem;
+  color: #e8a090;
+  font-size: 0.82rem;
+}
+
+.invent-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.inline-btn {
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.75rem;
+}
+
 .next-list {
   margin: 0;
   padding-left: 1.1rem;

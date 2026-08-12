@@ -2,12 +2,19 @@ import { useMemo, useState } from 'react'
 import {
   addRoute,
   createInitialState,
+  draftValidation,
   endTurn,
   FACTORY_RECIPES,
   fixClassLabel,
   hubStock,
+  partsForSlot,
+  produceMark,
   removeRoute,
+  SANDBOX_CHASSIS,
+  saveMarkDesign,
+  setDraftPart,
   spendAtFactory,
+  unlockInvent,
   type GameState,
   type GoodId,
 } from './sim'
@@ -41,12 +48,23 @@ function formatStock(stock: Partial<Record<GoodId, number>>): string {
   return parts.length ? parts.join(' · ') : 'Empty'
 }
 
+function formatCost(cost: Partial<Record<GoodId, number>>): string {
+  return (
+    (Object.entries(cost) as [GoodId, number][])
+      .filter(([, n]) => n > 0)
+      .map(([g, n]) => `${n} ${GOOD_LABELS[g]}`)
+      .join(', ') || '—'
+  )
+}
+
 export default function App() {
   const [state, setState] = useState<GameState>(() => createInitialState())
   const [flash, setFlash] = useState<string | null>(null)
+  const [markName, setMarkName] = useState('Ash Throat')
 
   const hub = useMemo(() => hubStock(state), [state])
   const recipe = FACTORY_RECIPES[0]!
+  const validation = useMemo(() => draftValidation(state), [state])
   const refineLine = useMemo(() => {
     const o = state.lastRefineOutput
     const parts = (['coke', 'plates', 'beams'] as const)
@@ -77,16 +95,12 @@ export default function App() {
     }
   }
 
-  function onFactory() {
-    apply(spendAtFactory(state, recipe.id))
-  }
-
   return (
     <div className="app-shell">
       <header className="top-bar">
         <div>
           <div className="title">Soot Empire</div>
-          <div className="subtitle">Sandbox v1 — logistics + Shortage Doctor</div>
+          <div className="subtitle">Sandbox v1 — logistics + invent</div>
         </div>
         <div className="turn-block">
           <span className="turn-label">Turn {state.turn}</span>
@@ -101,9 +115,114 @@ export default function App() {
           <HexMap state={state} />
         </section>
         <aside className="side-panel">
+          {flash && <p className="flash">{flash}</p>}
+
+          <h2>Invention</h2>
+          {!state.inventUnlocked ? (
+            <>
+              <p className="muted">
+                Early Industrial research door closed. Co-pilot stubbed.
+              </p>
+              <button
+                type="button"
+                className="primary"
+                onClick={() => apply(unlockInvent(state))}
+              >
+                Unlock Early Invent
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="muted">
+                Chassis: {SANDBOX_CHASSIS.name} (1 family subset). Hard bans +
+                soft taxes.
+              </p>
+              {SANDBOX_CHASSIS.slots.map((slot) => (
+                <div key={slot.id} className="invent-slot">
+                  <label htmlFor={`slot-${slot.id}`}>
+                    {slot.id}
+                    {slot.required ? ' *' : ''}
+                  </label>
+                  <select
+                    id={`slot-${slot.id}`}
+                    value={state.inventDraft[slot.id] ?? ''}
+                    onChange={(e) =>
+                      apply(
+                        setDraftPart(
+                          state,
+                          slot.id,
+                          e.target.value === '' ? null : e.target.value,
+                        ),
+                      )
+                    }
+                  >
+                    <option value="">— empty —</option>
+                    {partsForSlot(slot.type).map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+              <div className="invent-status">
+                {validation.legal ? (
+                  <p className="ok-line">
+                    Legal · {validation.role} · ATK {validation.stats.attack} /
+                    DEF {validation.stats.defense} · heat{' '}
+                    {validation.stats.heat}
+                    {validation.taxes.breakdown > 0
+                      ? ` · tax breakdown +${validation.taxes.breakdown}`
+                      : ''}
+                    {validation.taxes.fuelPressure > 0
+                      ? ` · fuel pressure ${validation.taxes.fuelPressure}`
+                      : ''}
+                  </p>
+                ) : (
+                  <ul className="ban-list">
+                    {validation.bans.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                )}
+                <p className="muted">Cost: {formatCost(validation.totalCost)} + frame</p>
+              </div>
+              <div className="invent-actions">
+                <input
+                  type="text"
+                  value={markName}
+                  onChange={(e) => setMarkName(e.target.value)}
+                  aria-label="Mark name"
+                />
+                <button
+                  type="button"
+                  className="primary"
+                  onClick={() => apply(saveMarkDesign(state, markName))}
+                >
+                  Save Mark
+                </button>
+              </div>
+              <ul className="plain-list">
+                {state.markDesigns.map((d) => (
+                  <li key={d.id}>
+                    <strong>{d.name}</strong> ({d.role}) · pool{' '}
+                    {state.producedMarks[d.id] ?? 0}
+                    <button
+                      type="button"
+                      className="inline-btn"
+                      onClick={() => apply(produceMark(state, d.id))}
+                    >
+                      Produce
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+
           <h2>Shortage Doctor</h2>
           {state.shortageAlerts.length === 0 ? (
-            <p className="muted">No logistics alarms. Chains look fed.</p>
+            <p className="muted">No logistics alarms.</p>
           ) : (
             <ul className="doctor-list">
               {state.shortageAlerts.map((a) => (
@@ -128,16 +247,17 @@ export default function App() {
               .join(', ')}
           </p>
           <p className="stock-line">
-            Built: {state.factoryOutput.machine_frame ?? 0}
+            Frames: {state.factoryOutput.machine_frame ?? 0}
           </p>
-          <button type="button" className="primary" onClick={onFactory}>
+          <button
+            type="button"
+            className="primary"
+            onClick={() => apply(spendAtFactory(state, recipe.id))}
+          >
             Produce {recipe.label}
           </button>
 
           <h2>Routes</h2>
-          <p className="muted">
-            Disconnect a feed to starve refine — Doctor should light up.
-          </p>
           <ul className="route-list">
             {EXTRACTOR_ROUTES.map((row) => {
               const on = state.routes.some(
@@ -157,30 +277,9 @@ export default function App() {
             })}
           </ul>
 
-          <h2>Extractors (local)</h2>
-          <ul className="plain-list">
-            {state.sites
-              .filter((s) => s.kind === 'extractor')
-              .map((s) => (
-                <li key={s.id}>
-                  {s.id}: {formatStock(s.stock)}
-                  {s.nodeId && (
-                    <span className="muted">
-                      {' '}
-                      · deposit{' '}
-                      {state.nodes.find((n) => n.id === s.nodeId)?.remaining ??
-                        0}{' '}
-                      left
-                    </span>
-                  )}
-                </li>
-              ))}
-          </ul>
-
           <h2>Last tick</h2>
-          {flash && <p className="flash">{flash}</p>}
           {state.lastTickLog.length === 0 ? (
-            <p className="muted">End a turn to run extract → haul → refine.</p>
+            <p className="muted">End a turn to run logistics.</p>
           ) : (
             <ul className="log-list">
               {state.lastTickLog.map((line, i) => (
@@ -189,11 +288,12 @@ export default function App() {
             </ul>
           )}
 
-          <h2>Acceptance #2</h2>
+          <h2>Acceptance #3</h2>
           <ol className="next-list">
-            <li>Connect coal, ore, timber; End turn a few times</li>
-            <li>Disconnect coal — Coke refine drops</li>
-            <li>Shortage Doctor suggests Connect Route</li>
+            <li>Feed hub + build Machine Frame(s)</li>
+            <li>Unlock Early Invent</li>
+            <li>Design legal Mark (try Walker Legs = ban)</li>
+            <li>Save + Produce into pool</li>
           </ol>
         </aside>
       </main>

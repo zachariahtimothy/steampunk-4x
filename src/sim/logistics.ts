@@ -29,6 +29,16 @@ function cloneState(state: GameState): GameState {
     lastTickLog: [...state.lastTickLog],
     lastRefineOutput: { ...state.lastRefineOutput },
     shortageAlerts: state.shortageAlerts.map((a) => ({ ...a })),
+    inventUnlocked: state.inventUnlocked,
+    inventDraft: { ...state.inventDraft },
+    markDesigns: state.markDesigns.map((d) => ({
+      ...d,
+      loadout: { ...d.loadout },
+      stats: { ...d.stats },
+      taxes: { ...d.taxes },
+      totalCost: { ...d.totalCost },
+    })),
+    producedMarks: { ...state.producedMarks },
   }
 }
 
