@@ -47,6 +47,23 @@ export type Route = {
 
 export type FactoryRecipeId = 'machine_frame'
 
+/** Suggested fix class — not a full advisor brain (SPEC Shortage Doctor). */
+export type FixClass =
+  | 'connect_route'
+  | 'raise_capacity'
+  | 'exhausted_deposit'
+  | 'need_bulk_at_hub'
+  | 'need_intermediates'
+
+export type ShortageAlert = {
+  id: string
+  severity: 'warning' | 'critical'
+  title: string
+  detail: string
+  fixClass: FixClass
+  relatedGood?: GoodId
+}
+
 export type GameState = {
   /** Turn index starting at 1. */
   turn: number
@@ -59,6 +76,10 @@ export type GameState = {
   factoryOutput: Partial<Record<FactoryRecipeId, number>>
   /** Last turn logistics log for UI/debug (serializable). */
   lastTickLog: string[]
+  /** Intermediates crafted during the last endTurn refine phase. */
+  lastRefineOutput: Partial<Record<IntermediateId, number>>
+  /** Shortage Doctor alerts from the last diagnosis. */
+  shortageAlerts: ShortageAlert[]
 }
 
 export const EXTRACT_RATE = 3
@@ -149,5 +170,7 @@ export function createInitialState(): GameState {
     routes: [],
     factoryOutput: {},
     lastTickLog: [],
+    lastRefineOutput: {},
+    shortageAlerts: [],
   }
 }
