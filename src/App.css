@@ -10,8 +10,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.7rem 1.1rem;
+  gap: 0.75rem 1rem;
+  padding: 0.65rem 1.1rem;
   border-bottom: 1px solid var(--brass-dim);
   background:
     linear-gradient(180deg, rgba(196, 163, 90, 0.12) 0%, transparent 42%),
@@ -20,6 +20,7 @@
     inset 0 -1px 0 rgba(0, 0, 0, 0.45),
     0 2px 10px rgba(0, 0, 0, 0.35);
   position: relative;
+  flex-wrap: wrap;
 }
 
 .top-bar::before,
@@ -70,11 +71,123 @@
   margin-top: 0.15rem;
 }
 
+/* Always-on economy pulse (Civ/SC-class) */
+.goods-pulse {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.good-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.28rem;
+  padding: 0.18rem 0.4rem;
+  border: 1px solid var(--iron-border);
+  border-radius: 2px;
+  background: rgba(18, 14, 11, 0.55);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  color: var(--ash-faint);
+}
+
+.good-chip.has {
+  color: var(--ash-text);
+  border-color: var(--brass-dim);
+  box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.08);
+}
+
+.good-chip.frames {
+  border-color: var(--brass);
+  color: var(--lamp-soft);
+}
+
+.good-name {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.65rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.good-n {
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
 .turn-block {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.attention-btn:disabled {
+  opacity: 0.45;
+}
+
+.inspector-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--iron-edge);
+}
+
+.inspector-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--lamp);
+  letter-spacing: 0.03em;
+}
+
+.inspector-sub {
+  font-size: 0.78rem;
+  color: var(--ash-muted);
+  margin-top: 0.1rem;
+}
+
+.lead {
+  margin: 0 0 0.5rem;
+  color: var(--ash-text);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+button.linkish {
+  display: inline;
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  color: var(--brass-bright);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-size: inherit;
+}
+
+button.linkish:hover:not(:disabled) {
+  background: none;
+  border: none;
+  color: var(--lamp);
+}
+
+.attention-list li {
+  margin-bottom: 0.4rem;
+}
+
+.side-panel.inspector {
+  /* Inspector is selection-scoped — keep plate density but avoid novel length */
+  max-width: 100%;
 }
 
 .turn-label {
