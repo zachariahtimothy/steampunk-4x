@@ -362,11 +362,14 @@ export default function App() {
             </ul>
           )}
 
-          <h2>Acceptance #4</h2>
+          <h2>Sandbox v1 path</h2>
           <ol className="next-list">
-            <li>Feed hub, invent + produce a Mark, Field it</li>
-            <li>March to contact · check preview</li>
-            <li>Attack (Orders) · cut routes → power drops</li>
+            <li>Connect coal, ore, timber routes</li>
+            <li>End turn → hub refine → Machine Frame</li>
+            <li>Optional: cut coal — Doctor + coke drop</li>
+            <li>Unlock invent → legal Mark → Produce → Field</li>
+            <li>March · preview · Attack (Orders)</li>
+            <li>Cut routes → out-of-supply power drops</li>
           </ol>
         </aside>
       </main>
