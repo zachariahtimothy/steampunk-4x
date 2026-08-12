@@ -11,6 +11,21 @@ import {
   fixClassLabel,
 } from './shortageDoctor'
 import {
+  clearDraft,
+  draftValidation,
+  produceMark,
+  saveMarkDesign,
+  setDraftPart,
+  unlockInvent,
+} from './invent/actions'
+import {
+  partsForSlot,
+  SANDBOX_CHASSIS,
+  SANDBOX_PARTS,
+  partById,
+} from './invent/catalog'
+import { emptyLoadout, validateMark } from './invent/validate'
+import {
   createInitialState,
   emptyStock,
   FACTORY_RECIPES,
@@ -50,16 +65,28 @@ export type {
 export {
   addRoute,
   axialToPixel,
+  clearDraft,
   createInitialState,
   diagnoseShortageDoctor,
+  draftValidation,
+  emptyLoadout,
   emptyStock,
   endTurn,
   FACTORY_RECIPES,
   fixClassLabel,
   hexDisk,
   hubStock,
+  partById,
+  partsForSlot,
+  produceMark,
   REFINE_RECIPES,
   removeRoute,
+  SANDBOX_CHASSIS,
+  SANDBOX_PARTS,
+  saveMarkDesign,
+  setDraftPart,
   spendAtFactory,
   stockOf,
+  unlockInvent,
+  validateMark,
 }

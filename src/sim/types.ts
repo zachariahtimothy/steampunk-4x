@@ -80,6 +80,14 @@ export type GameState = {
   lastRefineOutput: Partial<Record<IntermediateId, number>>
   /** Shortage Doctor alerts from the last diagnosis. */
   shortageAlerts: ShortageAlert[]
+  /** Early Industrial invent door open. */
+  inventUnlocked: boolean
+  /** Current workshop draft loadout (slot → part id). */
+  inventDraft: Record<string, string | null>
+  /** Saved legal Mark designs. */
+  markDesigns: import('./invent/validate').MarkDesign[]
+  /** designId → produced count in pool. */
+  producedMarks: Record<string, number>
 }
 
 export const EXTRACT_RATE = 3
@@ -172,5 +180,13 @@ export function createInitialState(): GameState {
     lastTickLog: [],
     lastRefineOutput: {},
     shortageAlerts: [],
+    inventUnlocked: false,
+    inventDraft: {
+      weapon: null,
+      armor: null,
+      utility: null,
+    },
+    markDesigns: [],
+    producedMarks: {},
   }
 }
