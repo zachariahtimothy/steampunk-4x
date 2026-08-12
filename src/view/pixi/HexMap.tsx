@@ -172,6 +172,28 @@ function paint(world: Container, state: GameState) {
     label.position.set(x, y)
     world.addChild(label)
   }
+
+  for (const army of state.armies) {
+    const { x, y } = axialToPixel(army.at, HEX_SIZE)
+    const color = army.owner === 'player' ? 0x4a7c59 : 0xa33b3b
+    const g = new Graphics()
+    g.star(x, y + (army.owner === 'player' ? -22 : 22), 5, 10, 5)
+    g.fill({ color })
+    g.stroke({ width: 1.5, color: 0xf0e6d8 })
+    world.addChild(g)
+    const label = new Text({
+      text: army.owner === 'player' ? 'P' : 'E',
+      style: {
+        fill: 0xf5efe6,
+        fontSize: 10,
+        fontFamily: 'IBM Plex Sans, Segoe UI, sans-serif',
+        fontWeight: '700',
+      },
+    })
+    label.anchor.set(0.5)
+    label.position.set(x, y + (army.owner === 'player' ? -22 : 22))
+    world.addChild(label)
+  }
 }
 
 function centerWorld(app: Application, world: Container) {

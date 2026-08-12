@@ -25,8 +25,24 @@ import {
   partById,
 } from './invent/catalog'
 import { emptyLoadout, validateMark } from './invent/validate'
+import { createInitialState } from './initialState'
 import {
-  createInitialState,
+  attackWithOrders,
+  fieldMark,
+  fuelOk,
+  isInSupply,
+  marchToContact,
+  playerArmy,
+  enemyArmy,
+  previewFight,
+  returnToHub,
+} from './combat/actions'
+import {
+  ARMY_SLOT_CAP,
+  ATTACK_ORDER_COST,
+  ORDERS_MAX,
+} from './combat/types'
+import {
   emptyStock,
   FACTORY_RECIPES,
   REFINE_RECIPES,
@@ -64,6 +80,9 @@ export type {
 
 export {
   addRoute,
+  ARMY_SLOT_CAP,
+  ATTACK_ORDER_COST,
+  attackWithOrders,
   axialToPixel,
   clearDraft,
   createInitialState,
@@ -72,15 +91,24 @@ export {
   emptyLoadout,
   emptyStock,
   endTurn,
+  enemyArmy,
   FACTORY_RECIPES,
+  fieldMark,
   fixClassLabel,
+  fuelOk,
   hexDisk,
   hubStock,
+  isInSupply,
+  marchToContact,
+  ORDERS_MAX,
   partById,
   partsForSlot,
+  playerArmy,
+  previewFight,
   produceMark,
   REFINE_RECIPES,
   removeRoute,
+  returnToHub,
   SANDBOX_CHASSIS,
   SANDBOX_PARTS,
   saveMarkDesign,

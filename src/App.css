@@ -245,6 +245,17 @@ button.route-on {
   font-size: 0.75rem;
 }
 
+.combat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.4rem 0 0.6rem;
+}
+
+.combat-actions button {
+  font-size: 0.8rem;
+}
+
 .next-list {
   margin: 0;
   padding-left: 1.1rem;

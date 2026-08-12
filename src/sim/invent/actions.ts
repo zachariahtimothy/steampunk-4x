@@ -1,6 +1,7 @@
 import type { GameState, GoodId } from '../types'
 import { stockOf } from '../types'
 import { diagnoseShortageDoctor } from '../shortageDoctor'
+import { cloneGameState } from '../clone'
 import { SANDBOX_CHASSIS } from './catalog'
 import {
   emptyLoadout,
@@ -12,33 +13,6 @@ import {
 export type ActionResult =
   | { ok: true; state: GameState }
   | { ok: false; error: string }
-
-function cloneState(state: GameState): GameState {
-  return {
-    ...state,
-    nodes: state.nodes.map((n) => ({ ...n })),
-    sites: state.sites.map((s) => ({
-      ...s,
-      stock: { ...s.stock },
-      at: { ...s.at },
-    })),
-    routes: state.routes.map((r) => ({ ...r })),
-    factoryOutput: { ...state.factoryOutput },
-    lastTickLog: [...state.lastTickLog],
-    lastRefineOutput: { ...state.lastRefineOutput },
-    shortageAlerts: state.shortageAlerts.map((a) => ({ ...a })),
-    inventUnlocked: state.inventUnlocked,
-    inventDraft: { ...state.inventDraft },
-    markDesigns: state.markDesigns.map((d) => ({
-      ...d,
-      loadout: { ...d.loadout },
-      stats: { ...d.stats },
-      taxes: { ...d.taxes },
-      totalCost: { ...d.totalCost },
-    })),
-    producedMarks: { ...state.producedMarks },
-  }
-}
 
 function takeHub(state: GameState, good: GoodId, qty: number): boolean {
   const hub = state.sites.find((s) => s.kind === 'hub')
@@ -53,7 +27,7 @@ export function unlockInvent(state: GameState): ActionResult {
   if (state.inventUnlocked) {
     return { ok: false, error: 'Invent already unlocked' }
   }
-  const next = cloneState(state)
+  const next = cloneGameState(state)
   next.inventUnlocked = true
   next.lastTickLog = ['Early Invent unlocked (research door)', ...next.lastTickLog]
   return { ok: true, state: next }
@@ -70,13 +44,13 @@ export function setDraftPart(
   const slot = SANDBOX_CHASSIS.slots.find((s) => s.id === slotId)
   if (!slot) return { ok: false, error: `Unknown slot ${slotId}` }
 
-  const next = cloneState(state)
+  const next = cloneGameState(state)
   next.inventDraft = { ...next.inventDraft, [slotId]: partId }
   return { ok: true, state: next }
 }
 
 export function clearDraft(state: GameState): ActionResult {
-  const next = cloneState(state)
+  const next = cloneGameState(state)
   next.inventDraft = emptyLoadout()
   return { ok: true, state: next }
 }
@@ -110,7 +84,7 @@ export function saveMarkDesign(
     role: validation.role,
   }
 
-  const next = cloneState(state)
+  const next = cloneGameState(state)
   next.markDesigns = [...next.markDesigns, design]
   next.lastTickLog = [
     `Saved Mark design "${design.name}" (${design.role})`,
@@ -141,7 +115,7 @@ export function produceMark(state: GameState, designId: string): ActionResult {
     }
   }
 
-  const next = cloneState(state)
+  const next = cloneGameState(state)
   const hub = next.sites.find((s) => s.kind === 'hub')
   if (!hub) return { ok: false, error: 'No hub' }
 

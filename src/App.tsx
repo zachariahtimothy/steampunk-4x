@@ -1,15 +1,24 @@
 import { useMemo, useState } from 'react'
 import {
   addRoute,
+  attackWithOrders,
+  ATTACK_ORDER_COST,
   createInitialState,
   draftValidation,
   endTurn,
+  enemyArmy,
   FACTORY_RECIPES,
+  fieldMark,
   fixClassLabel,
   hubStock,
+  isInSupply,
+  marchToContact,
   partsForSlot,
+  playerArmy,
+  previewFight,
   produceMark,
   removeRoute,
+  returnToHub,
   SANDBOX_CHASSIS,
   saveMarkDesign,
   setDraftPart,
@@ -65,6 +74,9 @@ export default function App() {
   const hub = useMemo(() => hubStock(state), [state])
   const recipe = FACTORY_RECIPES[0]!
   const validation = useMemo(() => draftValidation(state), [state])
+  const player = useMemo(() => playerArmy(state), [state])
+  const enemy = useMemo(() => enemyArmy(state), [state])
+  const fight = useMemo(() => previewFight(state), [state])
   const refineLine = useMemo(() => {
     const o = state.lastRefineOutput
     const parts = (['coke', 'plates', 'beams'] as const)
@@ -100,7 +112,7 @@ export default function App() {
       <header className="top-bar">
         <div>
           <div className="title">Soot Empire</div>
-          <div className="subtitle">Sandbox v1 — logistics + invent</div>
+          <div className="subtitle">Sandbox v1 — logistics · invent · fight</div>
         </div>
         <div className="turn-block">
           <span className="turn-label">Turn {state.turn}</span>
@@ -116,6 +128,68 @@ export default function App() {
         </section>
         <aside className="side-panel">
           {flash && <p className="flash">{flash}</p>}
+
+          <h2>Combat</h2>
+          {player && enemy && (
+            <>
+              <p className="stock-line">
+                {player.name}: HP {player.hp}/{player.hpMax} · Orders{' '}
+                {player.orders}/{player.ordersMax} ·{' '}
+                {isInSupply(state, player) ? 'In supply' : 'OUT OF SUPPLY'}
+              </p>
+              <p className="muted">
+                Units:{' '}
+                {player.units.map((u) => `${u.label}(${u.role})`).join(', ')}
+              </p>
+              <p className="stock-line">
+                {enemy.name}: HP {enemy.hp}/{enemy.hpMax}
+              </p>
+              {fight && (
+                <p className="muted">
+                  Preview: {fight.playerPower} vs {fight.enemyPower} →{' '}
+                  <strong>{fight.winner}</strong>
+                  {!fight.playerInSupply ? ' · supply penalty' : ''}
+                </p>
+              )}
+              <div className="combat-actions">
+                <button type="button" onClick={() => apply(marchToContact(state))}>
+                  March to contact (1 Ord)
+                </button>
+                <button type="button" onClick={() => apply(returnToHub(state))}>
+                  Return to Hub
+                </button>
+                <button
+                  type="button"
+                  className="primary"
+                  onClick={() => apply(attackWithOrders(state))}
+                >
+                  Attack ({ATTACK_ORDER_COST} Ord)
+                </button>
+              </div>
+              {state.lastFight && (
+                <p className="muted">{state.lastFight.summary}</p>
+              )}
+              <p className="muted">Field produced Marks:</p>
+              <ul className="plain-list">
+                {state.markDesigns.map((d) => {
+                  const n = state.producedMarks[d.id] ?? 0
+                  if (n < 1) return null
+                  return (
+                    <li key={`field-${d.id}`}>
+                      {d.name} ×{n}{' '}
+                      <button
+                        type="button"
+                        className="inline-btn"
+                        onClick={() => apply(fieldMark(state, d.id))}
+                      >
+                        Field
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            </>
+          )}
 
           <h2>Invention</h2>
           {!state.inventUnlocked ? (
@@ -288,12 +362,11 @@ export default function App() {
             </ul>
           )}
 
-          <h2>Acceptance #3</h2>
+          <h2>Acceptance #4</h2>
           <ol className="next-list">
-            <li>Feed hub + build Machine Frame(s)</li>
-            <li>Unlock Early Invent</li>
-            <li>Design legal Mark (try Walker Legs = ban)</li>
-            <li>Save + Produce into pool</li>
+            <li>Feed hub, invent + produce a Mark, Field it</li>
+            <li>March to contact · check preview</li>
+            <li>Attack (Orders) · cut routes → power drops</li>
           </ol>
         </aside>
       </main>

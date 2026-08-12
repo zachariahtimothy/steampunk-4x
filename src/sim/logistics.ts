@@ -14,33 +14,8 @@ import {
   stockOf,
 } from './types'
 import { diagnoseShortageDoctor } from './shortageDoctor'
-
-function cloneState(state: GameState): GameState {
-  return {
-    ...state,
-    nodes: state.nodes.map((n) => ({ ...n })),
-    sites: state.sites.map((s) => ({
-      ...s,
-      stock: { ...s.stock },
-      at: { ...s.at },
-    })),
-    routes: state.routes.map((r) => ({ ...r })),
-    factoryOutput: { ...state.factoryOutput },
-    lastTickLog: [...state.lastTickLog],
-    lastRefineOutput: { ...state.lastRefineOutput },
-    shortageAlerts: state.shortageAlerts.map((a) => ({ ...a })),
-    inventUnlocked: state.inventUnlocked,
-    inventDraft: { ...state.inventDraft },
-    markDesigns: state.markDesigns.map((d) => ({
-      ...d,
-      loadout: { ...d.loadout },
-      stats: { ...d.stats },
-      taxes: { ...d.taxes },
-      totalCost: { ...d.totalCost },
-    })),
-    producedMarks: { ...state.producedMarks },
-  }
-}
+import { cloneGameState } from './clone'
+import { phaseArmiesEndTurn } from './combat/actions'
 
 function getSite(state: GameState, id: string): Site {
   const site = state.sites.find((s) => s.id === id)
@@ -138,11 +113,12 @@ export function phaseRefine(
  * Order: extract → haul → refine → Shortage Doctor (manufacture is player spend).
  */
 export function endTurn(state: GameState): GameState {
-  const next = cloneState(state)
+  const next = cloneGameState(state)
   const log: string[] = []
   phaseExtract(next, log)
   phaseHaul(next, log)
   const refined = phaseRefine(next, log)
+  phaseArmiesEndTurn(next, log)
   next.lastRefineOutput = refined
   next.lastTickLog = log
   next.turn += 1
@@ -183,7 +159,7 @@ export function addRoute(
     capacity: opts?.capacity ?? DEFAULT_ROUTE_CAPACITY,
     tier: opts?.tier ?? 'road',
   }
-  const next = cloneState(state)
+  const next = cloneGameState(state)
   next.routes = [...next.routes, route]
   next.shortageAlerts = diagnoseShortageDoctor(next)
   return { ok: true, state: next }
@@ -193,7 +169,7 @@ export function removeRoute(state: GameState, routeId: string): ActionResult {
   if (!state.routes.some((r) => r.id === routeId)) {
     return { ok: false, error: 'Route not found' }
   }
-  const next = cloneState(state)
+  const next = cloneGameState(state)
   next.routes = next.routes.filter((r) => r.id !== routeId)
   next.shortageAlerts = diagnoseShortageDoctor(next)
   return { ok: true, state: next }
@@ -207,7 +183,7 @@ export function spendAtFactory(
   const recipe = FACTORY_RECIPES.find((r) => r.id === recipeId)
   if (!recipe) return { ok: false, error: 'Unknown factory recipe' }
 
-  const next = cloneState(state)
+  const next = cloneGameState(state)
   const hub = next.sites.find((s) => s.kind === 'hub')
   if (!hub) return { ok: false, error: 'No hub' }
 
