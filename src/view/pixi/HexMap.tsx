@@ -5,6 +5,7 @@ import {
   hexDisk,
   type GameState,
   type ResourceId,
+  type Site,
 } from '../../sim'
 
 const HEX_SIZE = 36
@@ -16,7 +17,14 @@ const RESOURCE_COLOR: Record<ResourceId, number> = {
   food: 0xc4a35a,
 }
 
-function drawHex(g: Graphics, x: number, y: number, size: number, fill: number, stroke: number) {
+function drawHex(
+  g: Graphics,
+  x: number,
+  y: number,
+  size: number,
+  fill: number,
+  stroke: number,
+) {
   const points: number[] = []
   for (let i = 0; i < 6; i++) {
     const angle = (Math.PI / 180) * (60 * i)
@@ -88,6 +96,10 @@ export function HexMap({ state }: Props) {
   return <div className="hex-map-host" ref={hostRef} />
 }
 
+function siteById(state: GameState, id: string): Site | undefined {
+  return state.sites.find((s) => s.id === id)
+}
+
 function paint(world: Container, state: GameState) {
   world.removeChildren()
 
@@ -97,6 +109,47 @@ function paint(world: Container, state: GameState) {
     drawHex(ground, x, y, HEX_SIZE - 1, 0x3a3028, 0x5c4a3a)
   }
   world.addChild(ground)
+
+  // Routes under markers
+  const routesG = new Graphics()
+  for (const route of state.routes) {
+    const from = siteById(state, route.fromSiteId)
+    const to = siteById(state, route.toSiteId)
+    if (!from || !to) continue
+    const a = axialToPixel(from.at, HEX_SIZE)
+    const b = axialToPixel(to.at, HEX_SIZE)
+    routesG.moveTo(a.x, a.y)
+    routesG.lineTo(b.x, b.y)
+    routesG.stroke({
+      width: route.tier === 'rail' ? 4 : 3,
+      color: route.tier === 'rail' ? 0xc4a35a : 0x7a9eb5,
+      alpha: 0.9,
+    })
+  }
+  world.addChild(routesG)
+
+  for (const site of state.sites) {
+    const { x, y } = axialToPixel(site.at, HEX_SIZE)
+    if (site.kind === 'hub') {
+      const hub = new Graphics()
+      hub.roundRect(x - 16, y - 16, 32, 32, 4)
+      hub.fill({ color: 0x5c4030 })
+      hub.stroke({ width: 2, color: 0xe8c36a })
+      world.addChild(hub)
+      const label = new Text({
+        text: 'HUB',
+        style: {
+          fill: 0xf5efe6,
+          fontSize: 10,
+          fontFamily: 'IBM Plex Sans, Segoe UI, sans-serif',
+          fontWeight: '700',
+        },
+      })
+      label.anchor.set(0.5)
+      label.position.set(x, y)
+      world.addChild(label)
+    }
+  }
 
   for (const node of state.nodes) {
     const { x, y } = axialToPixel(node.at, HEX_SIZE)
