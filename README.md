@@ -9,6 +9,7 @@ Hobby **single-player** turn-based industrial 4X.
 | Doc | Role |
 |------|------|
 | **[docs/spec/SPEC.md](docs/spec/SPEC.md)** | Product / game design spec |
+| [docs/sandbox-v1-acceptance.md](docs/sandbox-v1-acceptance.md) | **Sandbox v1 acceptance (§13)** |
 | [docs/adr/0001-tech-stack.md](docs/adr/0001-tech-stack.md) | Implementation stack lock |
 | [CONTEXT.md](CONTEXT.md) | Ubiquitous language |
 | [Sandbox v1 milestone](https://github.com/zachariahtimothy/steampunk-4x/milestone/1) | Build checklist |
@@ -33,17 +34,21 @@ Open the URL Vite prints (default `http://127.0.0.1:5173`).
 ```bash
 npm run build      # production bundle
 npm run typecheck  # tsc only
-npm test           # sim unit tests (vitest)
+npm test           # sim unit + §13 acceptance tests
 ```
 
-## Vertical slice
+## Vertical slice (Sandbox v1)
 
-Prove **logistics loop + invent/field a Mark** in a sandbox (~30–90 min), then Compact map. Details in SPEC §13.
+Prove **logistics loop + invent/field a Mark** in a supply-linked fight.
+
+**Play path:** connect routes → End turn → factory frame → unlock invent → save/produce/field Mark → march → attack.  
+Details and pass record: [docs/sandbox-v1-acceptance.md](docs/sandbox-v1-acceptance.md).
 
 ## Layout
 
 ```text
 src/sim/           authoritative game rules + state
+src/sim/acceptance/  §13 end-to-end acceptance tests
 src/view/pixi/     map renderer
 src/App.tsx        React chrome
 docs/spec/         design SPEC
@@ -53,4 +58,3 @@ docs/adr/          architecture decisions
 ## Git workflow
 
 PRs only — no direct commits to `main`. See `AGENTS.md`.
-
