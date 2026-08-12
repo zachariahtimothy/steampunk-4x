@@ -2,6 +2,7 @@ import type {
   FactoryRecipeId,
   GameState,
   GoodId,
+  IntermediateId,
   Route,
   Site,
 } from './types'
@@ -12,6 +13,7 @@ import {
   REFINE_RECIPES,
   stockOf,
 } from './types'
+import { diagnoseShortageDoctor } from './shortageDoctor'
 
 function cloneState(state: GameState): GameState {
   return {
@@ -25,6 +27,8 @@ function cloneState(state: GameState): GameState {
     routes: state.routes.map((r) => ({ ...r })),
     factoryOutput: { ...state.factoryOutput },
     lastTickLog: [...state.lastTickLog],
+    lastRefineOutput: { ...state.lastRefineOutput },
+    shortageAlerts: state.shortageAlerts.map((a) => ({ ...a })),
   }
 }
 
@@ -90,10 +94,17 @@ export function phaseHaul(state: GameState, log: string[]): void {
   }
 }
 
-/** Early refine at hub: convert bulk → intermediates while inputs last. */
-export function phaseRefine(state: GameState, log: string[]): void {
+/**
+ * Early refine at hub: convert bulk → intermediates while inputs last.
+ * Returns per-intermediate craft counts for Shortage Doctor / UI.
+ */
+export function phaseRefine(
+  state: GameState,
+  log: string[],
+): Partial<Record<IntermediateId, number>> {
+  const produced: Partial<Record<IntermediateId, number>> = {}
   const hub = state.sites.find((s) => s.kind === 'hub')
-  if (!hub) return
+  if (!hub) return produced
 
   for (const recipe of REFINE_RECIPES) {
     let crafts = 0
@@ -103,25 +114,29 @@ export function phaseRefine(state: GameState, log: string[]): void {
       crafts += 1
     }
     if (crafts > 0) {
+      produced[recipe.id] = (produced[recipe.id] ?? 0) + crafts * recipe.outputQty
       log.push(
         `Refine ${crafts}× ${recipe.id} at hub (−${crafts * recipe.inputQty} ${recipe.input})`,
       )
     }
   }
+  return produced
 }
 
 /**
  * Full logistics tick then advance turn.
- * Order: extract → haul → refine (manufacture is a player spend action).
+ * Order: extract → haul → refine → Shortage Doctor (manufacture is player spend).
  */
 export function endTurn(state: GameState): GameState {
   const next = cloneState(state)
   const log: string[] = []
   phaseExtract(next, log)
   phaseHaul(next, log)
-  phaseRefine(next, log)
+  const refined = phaseRefine(next, log)
+  next.lastRefineOutput = refined
   next.lastTickLog = log
   next.turn += 1
+  next.shortageAlerts = diagnoseShortageDoctor(next)
   return next
 }
 
@@ -160,6 +175,7 @@ export function addRoute(
   }
   const next = cloneState(state)
   next.routes = [...next.routes, route]
+  next.shortageAlerts = diagnoseShortageDoctor(next)
   return { ok: true, state: next }
 }
 
@@ -169,6 +185,7 @@ export function removeRoute(state: GameState, routeId: string): ActionResult {
   }
   const next = cloneState(state)
   next.routes = next.routes.filter((r) => r.id !== routeId)
+  next.shortageAlerts = diagnoseShortageDoctor(next)
   return { ok: true, state: next }
 }
 
@@ -186,6 +203,7 @@ export function spendAtFactory(
 
   for (const [good, qty] of Object.entries(recipe.cost) as [GoodId, number][]) {
     if (stockOf(hub, good) < qty) {
+      next.shortageAlerts = diagnoseShortageDoctor(next)
       return {
         ok: false,
         error: `Need ${qty} ${good} at hub (have ${stockOf(hub, good)})`,
@@ -200,6 +218,7 @@ export function spendAtFactory(
     `Factory produced 1 ${recipe.label}`,
     ...next.lastTickLog,
   ]
+  next.shortageAlerts = diagnoseShortageDoctor(next)
   return { ok: true, state: next }
 }
 

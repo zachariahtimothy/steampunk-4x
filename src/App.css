@@ -139,6 +139,58 @@ button.route-on {
   margin: 0 0 0.5rem;
 }
 
+.doctor-list {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+
+.doctor-alert {
+  border: 1px solid #6b5344;
+  border-radius: 4px;
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.45rem;
+  background: #2a221c;
+}
+
+.doctor-alert.critical {
+  border-color: #c45c4a;
+  background: #3a2420;
+}
+
+.doctor-alert.warning {
+  border-color: #c4a35a;
+  background: #322a1c;
+}
+
+.doctor-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #f0e6d8;
+  margin-bottom: 0.2rem;
+}
+
+.doctor-detail {
+  font-size: 0.82rem;
+  color: #d2c4b0;
+  margin-bottom: 0.35rem;
+}
+
+.doctor-fix {
+  display: inline-block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #1a1510;
+  background: #c4a35a;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+}
+
+.doctor-alert.critical .doctor-fix {
+  background: #e8a090;
+}
+
 .next-list {
   margin: 0;
   padding-left: 1.1rem;

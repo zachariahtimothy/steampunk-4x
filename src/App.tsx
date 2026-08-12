@@ -4,6 +4,7 @@ import {
   createInitialState,
   endTurn,
   FACTORY_RECIPES,
+  fixClassLabel,
   hubStock,
   removeRoute,
   spendAtFactory,
@@ -46,6 +47,13 @@ export default function App() {
 
   const hub = useMemo(() => hubStock(state), [state])
   const recipe = FACTORY_RECIPES[0]!
+  const refineLine = useMemo(() => {
+    const o = state.lastRefineOutput
+    const parts = (['coke', 'plates', 'beams'] as const)
+      .map((g) => ((o[g] ?? 0) > 0 ? `${GOOD_LABELS[g]} +${o[g]}` : null))
+      .filter(Boolean)
+    return parts.length ? parts.join(' · ') : 'None this tick'
+  }, [state.lastRefineOutput])
 
   function apply(
     result: { ok: true; state: GameState } | { ok: false; error: string },
@@ -78,7 +86,7 @@ export default function App() {
       <header className="top-bar">
         <div>
           <div className="title">Soot Empire</div>
-          <div className="subtitle">Sandbox v1 — logistics spine</div>
+          <div className="subtitle">Sandbox v1 — logistics + Shortage Doctor</div>
         </div>
         <div className="turn-block">
           <span className="turn-label">Turn {state.turn}</span>
@@ -93,12 +101,29 @@ export default function App() {
           <HexMap state={state} />
         </section>
         <aside className="side-panel">
+          <h2>Shortage Doctor</h2>
+          {state.shortageAlerts.length === 0 ? (
+            <p className="muted">No logistics alarms. Chains look fed.</p>
+          ) : (
+            <ul className="doctor-list">
+              {state.shortageAlerts.map((a) => (
+                <li key={a.id} className={`doctor-alert ${a.severity}`}>
+                  <div className="doctor-title">{a.title}</div>
+                  <div className="doctor-detail">{a.detail}</div>
+                  <div className="doctor-fix">{fixClassLabel(a.fixClass)}</div>
+                </li>
+              ))}
+            </ul>
+          )}
+
           <h2>Hub stock</h2>
           <p className="stock-line">{formatStock(hub)}</p>
+          <p className="muted">Last refine: {refineLine}</p>
 
           <h2>Factory</h2>
           <p className="muted">
-            {recipe.label}: {Object.entries(recipe.cost)
+            {recipe.label}:{' '}
+            {Object.entries(recipe.cost)
               .map(([g, n]) => `${n} ${GOOD_LABELS[g as GoodId]}`)
               .join(', ')}
           </p>
@@ -111,7 +136,7 @@ export default function App() {
 
           <h2>Routes</h2>
           <p className="muted">
-            Tier-1 road links. Extract → haul on End turn → refine at hub.
+            Disconnect a feed to starve refine — Doctor should light up.
           </p>
           <ul className="route-list">
             {EXTRACTOR_ROUTES.map((row) => {
@@ -143,7 +168,8 @@ export default function App() {
                     <span className="muted">
                       {' '}
                       · deposit{' '}
-                      {state.nodes.find((n) => n.id === s.nodeId)?.remaining ?? 0}{' '}
+                      {state.nodes.find((n) => n.id === s.nodeId)?.remaining ??
+                        0}{' '}
                       left
                     </span>
                   )}
@@ -163,11 +189,11 @@ export default function App() {
             </ul>
           )}
 
-          <h2>Happy path</h2>
+          <h2>Acceptance #2</h2>
           <ol className="next-list">
-            <li>Connect coal, ore, timber routes</li>
-            <li>End turn several times</li>
-            <li>Produce a Machine Frame at the factory</li>
+            <li>Connect coal, ore, timber; End turn a few times</li>
+            <li>Disconnect coal — Coke refine drops</li>
+            <li>Shortage Doctor suggests Connect Route</li>
           </ol>
         </aside>
       </main>
