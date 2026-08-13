@@ -1,6 +1,7 @@
 import type { GameState } from '../types'
 import { stockOf } from '../types'
 import { cloneGameState } from '../clone'
+import { PLAYER_FACTION_ID, hubForFaction, playerHub } from '../factions'
 import {
   ARMY_SLOT_CAP,
   ATTACK_ORDER_COST,
@@ -17,21 +18,23 @@ export type ActionResult =
   | { ok: true; state: GameState }
   | { ok: false; error: string }
 
-function hub(state: GameState) {
-  return state.sites.find((s) => s.kind === 'hub')
+function hubForArmy(state: GameState, army: Army) {
+  if (army.ownerFactionId) return hubForFaction(state, army.ownerFactionId)
+  return playerHub(state)
 }
 
-/** In supply when within 1 hex of hub or any site that has a Route to hub. */
+/** In supply when within 1 hex of own hub or any site routed to that hub. */
 export function isInSupply(state: GameState, army: Army): boolean {
-  const h = hub(state)
+  const h = hubForArmy(state, army)
   if (!h) return false
   if (axialDist(army.at, h.at) <= 1) return true
 
   for (const site of state.sites) {
+    if (site.id === h.id) continue
     const linked = state.routes.some(
       (r) =>
-        (r.fromSiteId === site.id && r.toSiteId === 'hub') ||
-        (r.toSiteId === site.id && r.fromSiteId === 'hub'),
+        (r.fromSiteId === site.id && r.toSiteId === h.id) ||
+        (r.toSiteId === site.id && r.fromSiteId === h.id),
     )
     if (linked && axialDist(army.at, site.at) <= 1) return true
   }
@@ -41,7 +44,7 @@ export function isInSupply(state: GameState, army: Army): boolean {
 export function fuelOk(state: GameState, army: Army): boolean {
   const need = army.units.reduce((s, u) => s + u.fuelUse, 0)
   if (need <= 0) return true
-  const h = hub(state)
+  const h = hubForArmy(state, army)
   if (!h) return false
   // Fielded machines draw coke from hub network when in supply path; else starve.
   if (!isInSupply(state, army)) return false
@@ -182,7 +185,7 @@ export function marchToContact(state: GameState): ActionResult {
 export function returnToHub(state: GameState): ActionResult {
   const next = cloneGameState(state)
   const player = playerArmy(next)
-  const h = hub(next)
+  const h = playerHub(next)
   if (!player || !h) return { ok: false, error: 'Missing army/hub' }
   player.at = { ...h.at }
   next.lastTickLog = [`${player.name} returned to Hub`, ...next.lastTickLog]
@@ -224,7 +227,7 @@ export function attackWithOrders(state: GameState): ActionResult {
 
   // Fuel upkeep pulse on attack if machines present
   const fuelNeed = player.units.reduce((s, u) => s + u.fuelUse, 0)
-  const h = hub(next)
+  const h = playerHub(next)
   if (h && fuelNeed > 0 && isInSupply(next, player)) {
     const take = Math.min(stockOf(h, 'coke'), fuelNeed)
     if (take > 0) {
@@ -279,6 +282,7 @@ export function createSandboxArmies(): Army[] {
   const player: Army = {
     id: 'army-player',
     owner: 'player',
+    ownerFactionId: PLAYER_FACTION_ID,
     name: 'Home Column',
     at: { q: 0, r: 0 },
     units: [
@@ -296,6 +300,7 @@ export function createSandboxArmies(): Army[] {
   const enemy: Army = {
     id: 'army-enemy',
     owner: 'enemy',
+    ownerFactionId: null,
     name: 'Ash Raiders',
     at: { q: 3, r: -1 },
     units: [

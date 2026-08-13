@@ -2,6 +2,7 @@ import type { GameState, GoodId } from '../types'
 import { stockOf } from '../types'
 import { diagnoseShortageDoctor } from '../shortageDoctor'
 import { cloneGameState } from '../clone'
+import { playerHub } from '../factions'
 import { SANDBOX_CHASSIS } from './catalog'
 import {
   emptyLoadout,
@@ -15,7 +16,7 @@ export type ActionResult =
   | { ok: false; error: string }
 
 function takeHub(state: GameState, good: GoodId, qty: number): boolean {
-  const hub = state.sites.find((s) => s.kind === 'hub')
+  const hub = playerHub(state)
   if (!hub || stockOf(hub, good) < qty) return false
   hub.stock[good] = stockOf(hub, good) - qty
   if (hub.stock[good] === 0) delete hub.stock[good]
@@ -116,7 +117,7 @@ export function produceMark(state: GameState, designId: string): ActionResult {
   }
 
   const next = cloneGameState(state)
-  const hub = next.sites.find((s) => s.kind === 'hub')
+  const hub = playerHub(next)
   if (!hub) return { ok: false, error: 'No hub' }
 
   for (const [good, qty] of Object.entries(validation.totalCost) as [
@@ -142,6 +143,13 @@ export function produceMark(state: GameState, designId: string): ActionResult {
     (next.factoryOutput.machine_frame ?? 0) - chassis.frameCost
   if (next.factoryOutput.machine_frame === 0) {
     delete next.factoryOutput.machine_frame
+  }
+  if (hub.factoryOutput) {
+    hub.factoryOutput.machine_frame =
+      (hub.factoryOutput.machine_frame ?? 0) - chassis.frameCost
+    if ((hub.factoryOutput.machine_frame ?? 0) <= 0) {
+      delete hub.factoryOutput.machine_frame
+    }
   }
 
   next.producedMarks[designId] = (next.producedMarks[designId] ?? 0) + 1

@@ -21,14 +21,28 @@ export type ResourceNode = {
 /** Settlement / industrial site on the strategy map. */
 export type SiteKind = 'hub' | 'extractor'
 
+/** Content subset — sandbox is one Faction; compact can hold two. */
+export type MatchPreset = 'sandbox' | 'compact'
+
+export type FactionId = string
+
+export type Faction = {
+  id: FactionId
+  name: string
+}
+
 export type Site = {
   id: string
   kind: SiteKind
   at: AxialCoord
+  /** Faction that owns this site. */
+  ownerFactionId: FactionId
   /** Extractor only: which deposit it works. */
   nodeId?: string
   /** Local stockpile (bulk + intermediates). */
   stock: Partial<Record<GoodId, number>>
+  /** Hub factory finished goods (per-hub). */
+  factoryOutput?: Partial<Record<FactoryRecipeId, number>>
 }
 
 /**
@@ -69,10 +83,17 @@ export type GameState = {
   turn: number
   /** Hand-authored map radius (axial distance from origin). */
   mapRadius: number
+  /** sandbox = one Faction; compact = two (same rules, content subset). */
+  preset: MatchPreset
+  factions: Faction[]
+  playerFactionId: FactionId
   nodes: ResourceNode[]
   sites: Site[]
   routes: Route[]
-  /** Finished goods produced at the hub factory (not hauled). */
+  /**
+   * Player-hub factory output (sandbox alias of that hub's factoryOutput).
+   * Rival hubs store theirs on the Site.
+   */
   factoryOutput: Partial<Record<FactoryRecipeId, number>>
   /** Last turn logistics log for UI/debug (serializable). */
   lastTickLog: string[]

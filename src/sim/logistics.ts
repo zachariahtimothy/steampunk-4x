@@ -1,5 +1,6 @@
 import type {
   FactoryRecipeId,
+  FactionId,
   GameState,
   GoodId,
   IntermediateId,
@@ -16,6 +17,7 @@ import {
 import { diagnoseShortageDoctor } from './shortageDoctor'
 import { cloneGameState } from './clone'
 import { phaseArmiesEndTurn } from './combat/actions'
+import { hubForFaction } from './factions'
 
 function getSite(state: GameState, id: string): Site {
   const site = state.sites.find((s) => s.id === id)
@@ -80,32 +82,36 @@ export function phaseHaul(state: GameState, log: string[]): void {
 }
 
 /**
- * Early refine at hub: convert bulk → intermediates while inputs last.
- * Returns per-intermediate craft counts for Shortage Doctor / UI.
+ * Early refine at every hub: convert bulk → intermediates while inputs last.
+ * Returned counts are the **player** hub only (sandbox Shortage Doctor).
  */
 export function phaseRefine(
   state: GameState,
   log: string[],
 ): Partial<Record<IntermediateId, number>> {
-  const produced: Partial<Record<IntermediateId, number>> = {}
-  const hub = state.sites.find((s) => s.kind === 'hub')
-  if (!hub) return produced
+  const playerProduced: Partial<Record<IntermediateId, number>> = {}
+  const hubs = state.sites.filter((s) => s.kind === 'hub')
 
-  for (const recipe of REFINE_RECIPES) {
-    let crafts = 0
-    while (stockOf(hub, recipe.input) >= recipe.inputQty) {
-      takeStock(hub, recipe.input, recipe.inputQty)
-      addStock(hub, recipe.id, recipe.outputQty)
-      crafts += 1
-    }
-    if (crafts > 0) {
-      produced[recipe.id] = (produced[recipe.id] ?? 0) + crafts * recipe.outputQty
-      log.push(
-        `Refine ${crafts}× ${recipe.id} at hub (−${crafts * recipe.inputQty} ${recipe.input})`,
-      )
+  for (const hub of hubs) {
+    for (const recipe of REFINE_RECIPES) {
+      let crafts = 0
+      while (stockOf(hub, recipe.input) >= recipe.inputQty) {
+        takeStock(hub, recipe.input, recipe.inputQty)
+        addStock(hub, recipe.id, recipe.outputQty)
+        crafts += 1
+      }
+      if (crafts > 0) {
+        const qty = crafts * recipe.outputQty
+        log.push(
+          `Refine ${crafts}× ${recipe.id} at ${hub.id} (−${crafts * recipe.inputQty} ${recipe.input})`,
+        )
+        if (hub.ownerFactionId === state.playerFactionId) {
+          playerProduced[recipe.id] = (playerProduced[recipe.id] ?? 0) + qty
+        }
+      }
     }
   }
-  return produced
+  return playerProduced
 }
 
 /**
@@ -175,16 +181,18 @@ export function removeRoute(state: GameState, routeId: string): ActionResult {
   return { ok: true, state: next }
 }
 
-/** Spend hub stock at the factory to produce a finished good. */
+/** Spend hub stock at that Faction's factory to produce a finished good. */
 export function spendAtFactory(
   state: GameState,
   recipeId: FactoryRecipeId,
+  factionId?: FactionId,
 ): ActionResult {
   const recipe = FACTORY_RECIPES.find((r) => r.id === recipeId)
   if (!recipe) return { ok: false, error: 'Unknown factory recipe' }
 
   const next = cloneGameState(state)
-  const hub = next.sites.find((s) => s.kind === 'hub')
+  const owner = factionId ?? next.playerFactionId
+  const hub = hubForFaction(next, owner)
   if (!hub) return { ok: false, error: 'No hub' }
 
   for (const [good, qty] of Object.entries(recipe.cost) as [GoodId, number][]) {
@@ -199,7 +207,11 @@ export function spendAtFactory(
   for (const [good, qty] of Object.entries(recipe.cost) as [GoodId, number][]) {
     takeStock(hub, good, qty)
   }
-  next.factoryOutput[recipeId] = (next.factoryOutput[recipeId] ?? 0) + 1
+  if (!hub.factoryOutput) hub.factoryOutput = {}
+  hub.factoryOutput[recipeId] = (hub.factoryOutput[recipeId] ?? 0) + 1
+  if (owner === next.playerFactionId) {
+    next.factoryOutput[recipeId] = (next.factoryOutput[recipeId] ?? 0) + 1
+  }
   next.lastTickLog = [
     `Factory produced 1 ${recipe.label}`,
     ...next.lastTickLog,
@@ -208,7 +220,10 @@ export function spendAtFactory(
   return { ok: true, state: next }
 }
 
-export function hubStock(state: GameState): Partial<Record<GoodId, number>> {
-  const hub = state.sites.find((s) => s.kind === 'hub')
+export function hubStock(
+  state: GameState,
+  factionId?: FactionId,
+): Partial<Record<GoodId, number>> {
+  const hub = hubForFaction(state, factionId ?? state.playerFactionId)
   return hub ? { ...hub.stock } : {}
 }

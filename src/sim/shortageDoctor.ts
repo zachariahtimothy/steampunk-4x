@@ -8,6 +8,7 @@ import type {
   Site,
 } from './types'
 import { REFINE_RECIPES, stockOf } from './types'
+import { playerHub } from './factions'
 
 export type { FixClass, ShortageAlert }
 
@@ -29,18 +30,22 @@ const GOOD_LABEL: Record<GoodId, string> = {
 }
 
 function hubOf(state: GameState): Site | undefined {
-  return state.sites.find((s) => s.kind === 'hub')
+  return playerHub(state)
 }
 
 function hasRouteToHub(state: GameState, fromSiteId: string): boolean {
+  const hub = hubOf(state)
+  if (!hub) return false
   return state.routes.some(
-    (r) => r.fromSiteId === fromSiteId && r.toSiteId === 'hub',
+    (r) => r.fromSiteId === fromSiteId && r.toSiteId === hub.id,
   )
 }
 
 function routeCapacityToHub(state: GameState, fromSiteId: string): number {
+  const hub = hubOf(state)
+  if (!hub) return 0
   return state.routes
-    .filter((r) => r.fromSiteId === fromSiteId && r.toSiteId === 'hub')
+    .filter((r) => r.fromSiteId === fromSiteId && r.toSiteId === hub.id)
     .reduce((sum, r) => sum + r.capacity, 0)
 }
 
