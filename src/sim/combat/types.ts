@@ -1,4 +1,4 @@
-import type { AxialCoord } from '../types'
+import type { AxialCoord, FactionId } from '../types'
 import type { CombatRole } from '../invent/catalog'
 
 export const ARMY_SLOT_CAP = 4
@@ -23,6 +23,8 @@ export type ArmyUnit = {
 export type Army = {
   id: string
   owner: ArmyOwner
+  /** Faction owner; null = sandbox dummy (Ash Raiders), not a Faction. */
+  ownerFactionId: FactionId | null
   name: string
   at: AxialCoord
   units: ArmyUnit[]

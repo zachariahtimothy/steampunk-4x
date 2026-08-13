@@ -5,10 +5,12 @@ export function cloneGameState(state: GameState): GameState {
   return {
     ...state,
     nodes: state.nodes.map((n) => ({ ...n, at: { ...n.at } })),
+    factions: state.factions.map((f) => ({ ...f })),
     sites: state.sites.map((s) => ({
       ...s,
       stock: { ...s.stock },
       at: { ...s.at },
+      factoryOutput: s.factoryOutput ? { ...s.factoryOutput } : undefined,
     })),
     routes: state.routes.map((r) => ({ ...r })),
     factoryOutput: { ...state.factoryOutput },

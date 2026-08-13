@@ -25,7 +25,14 @@ import {
   partById,
 } from './invent/catalog'
 import { emptyLoadout, validateMark } from './invent/validate'
-import { createInitialState } from './initialState'
+import {
+  PLAYER_FACTION_ID,
+  RIVAL_FACTION_ID,
+  hubForFaction,
+  playerHub,
+} from './factions'
+import { createDualFactionState, createInitialState } from './initialState'
+import { cloneGameState } from './clone'
 import {
   attackWithOrders,
   fieldMark,
@@ -49,11 +56,14 @@ import {
   stockOf,
   type AxialCoord,
   type BulkResourceId,
+  type Faction,
+  type FactionId,
   type FactoryRecipeId,
   type FixClass,
   type GameState,
   type GoodId,
   type IntermediateId,
+  type MatchPreset,
   type ResourceId,
   type ResourceNode,
   type Route,
@@ -65,11 +75,14 @@ import {
 export type {
   AxialCoord,
   BulkResourceId,
+  Faction,
+  FactionId,
   FactoryRecipeId,
   FixClass,
   GameState,
   GoodId,
   IntermediateId,
+  MatchPreset,
   ResourceId,
   ResourceNode,
   Route,
@@ -85,6 +98,8 @@ export {
   attackWithOrders,
   axialToPixel,
   clearDraft,
+  cloneGameState,
+  createDualFactionState,
   createInitialState,
   diagnoseShortageDoctor,
   draftValidation,
@@ -97,6 +112,7 @@ export {
   fixClassLabel,
   fuelOk,
   hexDisk,
+  hubForFaction,
   hubStock,
   isInSupply,
   marchToContact,
@@ -104,11 +120,14 @@ export {
   partById,
   partsForSlot,
   playerArmy,
+  PLAYER_FACTION_ID,
+  playerHub,
   previewFight,
   produceMark,
   REFINE_RECIPES,
   removeRoute,
   returnToHub,
+  RIVAL_FACTION_ID,
   SANDBOX_CHASSIS,
   SANDBOX_PARTS,
   saveMarkDesign,
